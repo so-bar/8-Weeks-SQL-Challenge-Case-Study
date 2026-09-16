@@ -4,8 +4,6 @@
 
 ## Entity Relationship Diagram
 <img width="630" height="287" alt="image" src="https://github.com/user-attachments/assets/871d488d-5439-4a4f-b4f3-daa008f4df6d" />
-
-  [APPROACH](#approach)
   
 **1. What is the total amount each customer spent at the restaurant?**
     
@@ -41,9 +39,23 @@
 
 **3. What was the first item from the menu purchased by each customer?**
 
+    WITH customer_order AS (
+      SELECT customer_id, order_date, product_name,
+      RANK() OVER(PARTITION BY customer_id ORDER BY order_date asc) as order_rank
+      FROM sales s
+      JOIN menu m
+      ON s.product_id = m.product_id
+     )
+     
+     SELECT DISTINCT customer_id, order_date, product_name
+     FROM customer_order
+     WHERE order_rank = 1
 
----
 
-[View on DB Fiddle](https://www.db-fiddle.com/f/2rM8RAnq7h5LLDTzZiRWcd/138)
+| customer_id | order_date | product_name |
+| ----------- | ---------- | ------------ |
+| A           | 2021-01-01 | curry        |
+| A           | 2021-01-01 | sushi        |
+| B           | 2021-01-01 | curry        |
+| C           | 2021-01-01 | ramen        |
 
-[View on DB Fiddle](https://www.db-fiddle.com/f/2rM8RAnq7h5LLDTzZiRWcd/138)
