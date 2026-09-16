@@ -5,6 +5,7 @@
 ## Entity Relationship Diagram
 <img width="630" height="287" alt="image" src="https://github.com/user-attachments/assets/871d488d-5439-4a4f-b4f3-daa008f4df6d" />
 
+  [APPROACH](#approach)
   
 **1. What is the total amount each customer spent at the restaurant?**
     
@@ -28,4 +29,21 @@
 
 **2. How many days has each customer visited the restaurant?**
 
+    SELECT customer_id, COUNT(DISTINCT order_date) as total_visit
+    FROM sales
+    GROUP BY customer_id
 
+| customer_id | total_visit |
+| ----------- | ----------- |
+| A           | 4           |
+| B           | 6           |
+| C           | 2           |
+
+**3. What was the first item from the menu purchased by each customer?**
+
+
+---
+
+[View on DB Fiddle](https://www.db-fiddle.com/f/2rM8RAnq7h5LLDTzZiRWcd/138)
+
+[View on DB Fiddle](https://www.db-fiddle.com/f/2rM8RAnq7h5LLDTzZiRWcd/138)
