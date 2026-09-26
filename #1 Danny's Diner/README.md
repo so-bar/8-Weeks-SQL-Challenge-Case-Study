@@ -66,13 +66,13 @@
 **4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
 
 ```sql
-      SELECT product_name, COUNT(product_name) AS total_orders
-      FROM sales s
-      JOIN menu m
-      ON s.product_id = m.product_id
-      GROUP BY product_name
-      ORDER BY total_orders DESC
-      LIMIT 1;
+    SELECT product_name, COUNT(product_name) AS total_orders
+    FROM sales s
+    JOIN menu m
+    ON s.product_id = m.product_id
+    GROUP BY product_name
+    ORDER BY total_orders DESC
+    LIMIT 1;
 ```
 
 | product_name | total_orders |
@@ -94,10 +94,9 @@
       SELECT *, DENSE_RANK() OVER(PARTITION BY customer_id ORDER BY total_orders DESC) AS ranking
       FROM order_list
     )
-      
-     SELECT customer_id, product_name
-     FROM ranked_list
-     WHERE ranking = 1;
+   SELECT customer_id, product_name
+   FROM ranked_list
+   WHERE ranking = 1;
 ```
 
 | customer_id | product_name |
@@ -135,19 +134,19 @@
  **7. Which item was purchased just before the customer became a member?**
 
  ```sql
-    WITH ranked_member_sales AS(
-      SELECT s.customer_id, product_name, order_date,
-      DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY order_date DESC) as ranking
-      FROM sales s
-      JOIN menu mn
-      ON s.product_id = mn.product_id
-      JOIN members m
-      ON s.customer_id = m.customer_id AND s.order_date < m.join_date
-    )
-    
-    SELECT customer_id, product_name, order_date
-    FROM ranked_member_sales
-    WHERE ranking = 1
+      WITH ranked_member_sales AS(
+        SELECT s.customer_id, product_name, order_date,
+        DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY order_date DESC) as ranking
+        FROM sales s
+        JOIN menu mn
+        ON s.product_id = mn.product_id
+        JOIN members m
+        ON s.customer_id = m.customer_id AND s.order_date < m.join_date
+      )
+      
+      SELECT customer_id, product_name, order_date
+      FROM ranked_member_sales
+      WHERE ranking = 1
 ```
 
 | customer_id | product_name | order_date |
@@ -159,14 +158,14 @@
 **8. What is the total items and amount spent for each member before they became a member?**
 
 ```sql
-     SELECT s.customer_id, count(s.product_id) AS total_items, sum(price) AS total_amount_spent
-     FROM sales s
-     JOIN menu mn
-     ON s.product_id = mn.product_id
-     JOIN members m
-     ON s.customer_id = m.customer_id AND s.order_date < m.join_date
-     GROUP BY s.customer_id
-     ORDER BY customer_id
+    SELECT s.customer_id, count(s.product_id) AS total_items, sum(price) AS total_amount_spent
+    FROM sales s
+    JOIN menu mn
+    ON s.product_id = mn.product_id
+    JOIN members m
+    ON s.customer_id = m.customer_id AND s.order_date < m.join_date
+    GROUP BY s.customer_id
+    ORDER BY customer_id
 ```
 
 | customer_id | total_items | total_amount_spent |
@@ -197,4 +196,27 @@
 
 
 **10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?**
+
+```sql
+    SELECT s.customer_id, 
+    SUM(CASE
+        WHEN order_date>= join_date AND order_date<= join_date+6 THEN price*20
+      WHEN product_name = 'sushi' then price*20
+        ELSE price*10
+        END) AS total_points
+    FROM sales s
+    JOIN menu mn
+    ON s.product_id = mn.product_id
+    JOIN members m
+    ON s.customer_id = m.customer_id
+    WHERE s.order_date <= '2021-01-31'
+    GROUP BY s.customer_id
+    ORDER BY total_points DESC
+```
+
+| customer_id | total_points |
+| ----------- | ------------ |
+| A           | 1370         |
+| B           | 820          |
+
 
