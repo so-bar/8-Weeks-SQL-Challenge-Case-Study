@@ -1,10 +1,36 @@
 # dannys-diner-customer-analytics
 <img width="1080" height="1080" alt="image" src="https://github.com/user-attachments/assets/6c61bb4b-0bea-45cb-b62d-6cd8623a7a41" />
 
+## Table of Contents
+- [Overview](#overview)
+- [Business Context](#business-context)
+- [Data Schema](#data-schema)
+- [Entity Relationship Diagram](#entity-relationship-diagram)
+- [Business Questions & Solutions](#business-questions--solutions)
+- [Key Insights & Recommendations](#key-insights--recommendations)
+
+## Overview
+Danny's Diner is a SQL case study focused on understanding customer spending, visit patterns, menu preferences, and loyalty program activity.
+The goal is to use SQL to turn the restaurant's transaction data into useful insights about its customers and their purchasing behavior.
+
+## Business Context
+Danny's Diner serves three menu items: sushi, curry, and ramen. The restaurant has collected basic sales and customer membership data, and Danny wants to better understand how customers are interacting with the business.
+
+In this case study, I use SQL to explore questions such as:
+Customer Behavior: How much does each customer spend, and how often do they visit?
+Menu Preferences: Which menu items are customers purchasing most often?
+Loyalty Program: What does customer purchasing behavior look like before and after joining the membership program?
+
+## Data Schema
+The analysis uses three relational tables:
+- sales — Contains customer purchases, including the customer, order date, and product ordered.
+- menu — Contains the menu items and their prices.
+- members — Contains customers who joined the loyalty program and their join dates.
 
 ## Entity Relationship Diagram
 <img width="630" height="287" alt="image" src="https://github.com/user-attachments/assets/871d488d-5439-4a4f-b4f3-daa008f4df6d" />
-  
+
+## Business Questions & Solutions  
 **1. What is the total amount each customer spent at the restaurant?**
 
 ```sql
@@ -219,4 +245,4 @@
 | A           | 1370         |
 | B           | 820          |
 
-
+## Key Insights & Recommendations
