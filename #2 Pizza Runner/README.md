@@ -34,7 +34,8 @@ All tables sit within the pizza_runner schema across six relational tables:
 
 ## Data Cleaning & Preparation
 
-The raw exclusions and extras columns had inconsistent missing entries (true NULLs, blank spaces, and the text 'null'). I created a new temporary table called customer_orders_temp using CASE statements to detect all these variations and standardize them into uniform database NULL values.
+#### Customer Orders Table Clean Up
+The raw exclusions and extras columns in customer_orders table had inconsistent missing entries (true NULLs, blank spaces, and the text 'null'). I created a new temporary table called customer_orders_temp using CASE statements to detect all these variations and standardize them into uniform database NULL values.
 
 
 ```sql
@@ -79,6 +80,51 @@ CREATE TEMP TABLE customer_orders_temp AS
 | 10       | 104         | 1        |            |        | 2020-01-11 18:34:49 |
 | 10       | 104         | 1        | 2, 6       | 1, 4   | 2020-01-11 18:34:49 |
 
+
+#### Runner Orders Table Clean Up
+The raw runner_orders table had inconsistent missing entries (true NULLs, blanks, and text 'null') and messy text suffixes (km, mins, minutes). I created a temporary table, runner_orders_temp, using CASE statements combined with REGEXP_REPLACE to strip the text units and standardize all missing data into uniform database NULL values. I then used explicit CAST functions to immediately convert the columns into their proper TIMESTAMP, FLOAT, and INTEGER data types.
+
+```sql
+DROP TABLE IF EXISTS runner_orders_temp;
+
+CREATE TEMP TABLE runner_orders_temp AS
+	SELECT order_id, runner_id,
+      CASE 
+         WHEN pickup_time is NULL or pickup_time in ('null', ' ') THEN NULL
+         ELSE CAST(pickup_time AS timestamp)
+      END AS pickup_time, 
+      CASE 
+         WHEN distance IS NULL OR distance IN ('null', '') THEN NULL
+         ELSE CAST(REGEXP_REPLACE(distance, '[a-zA-Z ]', '', 'g') AS FLOAT)
+      END AS distance,
+      CASE
+         WHEN duration IS NULL OR duration IN ('null', '') THEN NULL
+         ELSE CAST(REGEXP_REPLACE(duration, '[a-zA-Z]', '', 'g') AS INT)
+      END AS duration,
+      CASE
+      	WHEN cancellation IS NULL OR cancellation IN ('null', '') THEN NULL
+        ELSE cancellation
+      END AS cancellation
+    FROM runner_orders;
+    
+SELECT *
+FROM runner_orders_temp;
+```
+
+✅ Result
+
+| order_id | runner_id | pickup_time         | distance | duration | cancellation            |
+| -------- | --------- | ------------------- | -------- | -------- | ----------------------- |
+| 1        | 1         | 2020-01-01 18:15:34 | 20       | 32       |                         |
+| 2        | 1         | 2020-01-01 19:10:54 | 20       | 27       |                         |
+| 3        | 1         | 2020-01-03 00:12:37 | 13.4     | 20       |                         |
+| 4        | 2         | 2020-01-04 13:53:03 | 23.4     | 40       |                         |
+| 5        | 3         | 2020-01-08 21:10:57 | 10       | 15       |                         |
+| 6        | 3         |                     |          |          | Restaurant Cancellation |
+| 7        | 2         | 2020-01-08 21:30:45 | 25       | 25       |                         |
+| 8        | 2         | 2020-01-10 00:15:02 | 23.4     | 15       |                         |
+| 9        | 2         |                     |          |          | Customer Cancellation   |
+| 10       | 1         | 2020-01-11 18:50:20 | 10       | 10       |                         |
 
 
 ## Business Questions & Solutions
