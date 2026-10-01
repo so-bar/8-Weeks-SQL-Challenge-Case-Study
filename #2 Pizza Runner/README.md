@@ -147,6 +147,28 @@ FROM customer_orders_temp;
 #### Key Takeaway
 Dataset contains a total of 14 pizza orders.
 
+### Question 2 - How many unique customer orders were made?
+
+#### Approach
+Since we want to count unique orders rather than customers, I used order_id and counted each order only once.
+
+```sql
+SELECT COUNT(DISTINCT order_id) AS total_pizza_order
+FROM customer_orders_temp;
+```
+
+✅ Result
+
+| total_pizza_order |
+| ----------------- |
+| 10                |
+
+#### Key Takeaway
+The dataset contains 10 unique customer orders.
+
+
+
+
 
 ## Key Insights & Recommendations
 ---
