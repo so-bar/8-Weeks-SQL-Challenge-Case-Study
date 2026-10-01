@@ -128,7 +128,25 @@ FROM runner_orders_temp;
 
 
 ## Business Questions & Solutions
----
+
+### Question 1 - How many pizzas were ordered?
+
+#### Approach
+Since we are looking for the total number of pizza orders, I counted the records in the customer_orders_temp table.
+
+```sql
+SELECT COUNT(*) AS total_pizza_order
+FROM customer_orders_temp;
+```
+✅ Result
+
+| total_pizza_order |
+| ----------------- |
+| 14                |
+
+#### Key Takeaway
+Dataset contains a total of 14 pizza orders.
+
 
 ## Key Insights & Recommendations
 ---
